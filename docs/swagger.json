@@ -1,0 +1,231 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API para gerenciar a evolução dos pokemons",
+        "title": "Pokemon CRUD API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/pokemons": {
+            "get": {
+                "description": "Retorna todos os Pokémons ordenados por nível de evolução, do menor para o maior",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pokémons"
+                ],
+                "summary": "Lista Pokémons",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Pokemon"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Cria um novo Pokémon com nome e nível de evolução",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pokémons"
+                ],
+                "summary": "Adiciona um novo Pokémon",
+                "parameters": [
+                    {
+                        "description": "Dados do Pokémon",
+                        "name": "pokemon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PokemonDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Pokemon"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/pokemons/{id}": {
+            "delete": {
+                "description": "Remove um Pokémon pelo ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pokémons"
+                ],
+                "summary": "Deleta um Pokémon",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Pokémon",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Pokémon deletado com sucesso",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Atualiza as informações de um Pokémon pelo ID. Pelo menos um dos campos deve ser fornecido",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pokémons"
+                ],
+                "summary": "Atualiza um Pokémon",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID do Pokémon",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Dados atualizados do Pokémon (Nome e/ou Nível de Evolução)",
+                        "name": "pokemon",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.PokemonUpdateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Pokemon"
+                        }
+                    },
+                    "400": {
+                        "description": "Erro de validação: campos inválidos ou nenhum campo fornecido",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Pokémon não encontrado",
+                        "schema": {
+                            "$ref": "#/definitions/models.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "errors": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "models.Pokemon": {
+            "type": "object",
+            "required": [
+                "evolves_at",
+                "name"
+            ],
+            "properties": {
+                "evolves_at": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.PokemonDTO": {
+            "type": "object",
+            "required": [
+                "evolves_at",
+                "name"
+            ],
+            "properties": {
+                "evolves_at": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 2
+                }
+            }
+        },
+        "models.PokemonUpdateDTO": {
+            "type": "object",
+            "properties": {
+                "evolves_at": {
+                    "type": "integer",
+                    "maximum": 100,
+                    "minimum": 1
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 30,
+                    "minLength": 2
+                }
+            }
+        }
+    }
+}
